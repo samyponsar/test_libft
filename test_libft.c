@@ -833,120 +833,412 @@ void	test_putnbr_fd()
 	close(fd[1]);
 }
 
+void	test_lstnew()
+{
+	t_list	*new;
+	char	*str = strdup("test");
+
+	new = ft_lstnew(str);
+	if (!new)
+		exit(1);
+	assert(new->content == str);
+	assert(strcmp(new->content, "test") == 0);
+	assert(new->next == NULL);
+
+	free(new);
+
+	new = ft_lstnew(NULL);
+	if (!new)
+		exit(1);
+	assert(new->content == NULL);
+	assert(new->next == NULL);
+	free(new);
+
+	free(str);
+}
+
+void	test_lstadd_front()
+{
+	t_list	*lst = NULL;
+
+	t_list	*first = ft_lstnew(NULL);
+	ft_lstadd_front(&lst, first);
+	assert(lst == first);
+	assert(lst->next == NULL);
+
+	ft_lstadd_front(&lst, NULL);
+	assert(lst == first);
+	assert(lst->next == NULL);
+
+	t_list	*second = ft_lstnew(NULL);
+	ft_lstadd_front(&lst, second);
+	assert(lst == second);
+	assert(lst->next == first);
+
+	free(first);
+	free(second);
+}
+
+void	test_lstsize()
+{
+	t_list	*lst = NULL;
+
+	assert(ft_lstsize(lst) == 0);
+
+	ft_lstadd_front(&lst, ft_lstnew(NULL));
+	assert(ft_lstsize(lst) == 1);
+
+	ft_lstadd_front(&lst, ft_lstnew(NULL));
+	assert(ft_lstsize(lst) == 2);
+
+	ft_lstadd_front(&lst, ft_lstnew(NULL));
+	ft_lstadd_front(&lst, ft_lstnew(NULL));
+	ft_lstadd_front(&lst, ft_lstnew(NULL));
+	assert(ft_lstsize(lst) == 5);
+
+	t_list	*next;
+	while (lst)
+	{
+		next = lst->next;
+		free(lst);
+		lst = next;
+	}
+}
+
+void	test_lstlast()
+{
+	t_list	*lst = NULL;
+
+	assert(ft_lstlast(lst) == NULL);
+
+	t_list	*first = ft_lstnew(NULL);
+	ft_lstadd_front(&lst, first);
+	assert(ft_lstlast(lst) == first);
+
+	ft_lstadd_front(&lst, ft_lstnew(NULL));
+	ft_lstadd_front(&lst, ft_lstnew(NULL));
+	ft_lstadd_front(&lst, ft_lstnew(NULL));
+	ft_lstadd_front(&lst, ft_lstnew(NULL));
+	ft_lstadd_front(&lst, ft_lstnew(NULL));
+	assert(ft_lstlast(lst) == first);
+
+	t_list	*next;
+	while (lst)
+	{
+		next = lst->next;
+		free(lst);
+		lst = next;
+	}
+}
+
+void	test_lstadd_back()
+{
+	t_list	*lst = NULL;
+
+	t_list	*first = ft_lstnew(NULL);
+	ft_lstadd_back(&lst, first);
+	assert(lst == first);
+
+	t_list	*second = ft_lstnew(NULL);
+	ft_lstadd_back(&lst, second);
+	assert(lst == first);
+	assert(lst->next == second);
+	assert(lst->next->next == NULL);
+
+	ft_lstadd_back(&lst, NULL);
+	ft_lstadd_back(&lst, NULL);
+	ft_lstadd_back(&lst, NULL);
+	ft_lstadd_back(&lst, NULL);
+	ft_lstadd_back(&lst, NULL);
+	ft_lstadd_back(&lst, NULL);
+	t_list	*third = ft_lstnew(NULL);
+	ft_lstadd_back(&lst, third);
+	assert(lst == first);
+	assert(lst->next == second);
+	assert(ft_lstlast(lst) == third);
+
+	t_list	*next;
+	while (lst)
+	{
+		next = lst->next;
+		free(lst);
+		lst = next;
+	}
+}
+
+void	set_to_zero(void *content)
+{
+	*(int *)content = 0;
+}
+
+void	test_lstdelone()
+{
+	int	content1 = 1;
+	t_list	*first = ft_lstnew(&content1);
+	int content2 = 2;
+	t_list	*second = ft_lstnew(&content2);
+
+	ft_lstdelone(first, NULL);
+	ft_lstdelone(NULL, set_to_zero);
+	ft_lstdelone(NULL, NULL);
+
+	ft_lstadd_back(&first, second);
+	ft_lstdelone(first, set_to_zero);
+	assert(content1 == 0);
+	assert(*(int *)second->content == 2);
+
+	free(second);
+}
+
+void	test_lstclear()
+{
+	t_list	*lst = NULL;
+	int	content1 = 1;
+	t_list	*first = ft_lstnew(&content1);
+	int content2 = 2;
+	t_list	*second = ft_lstnew(&content2);
+	int content3 = 3;
+	t_list	*third = ft_lstnew(&content3);
+
+	ft_lstclear(&first, NULL);
+	ft_lstclear(NULL, set_to_zero);
+	ft_lstclear(NULL, NULL);
+
+	ft_lstadd_back(&lst, first);
+	ft_lstadd_back(&lst, second);
+	ft_lstadd_back(&lst, third);
+	ft_lstclear(&lst, set_to_zero);
+	assert(content1 == 0);
+	assert(content2 == 0);
+	assert(content3 == 0);
+}
+
+void	square(void *i)
+{
+	int	*p = i;
+	*p *= *p;
+}
+
+void	test_lstiter()
+{
+	t_list	*lst = NULL;
+	t_list	*cur;
+	int		i1 = 1;
+	int		i2 = 2;
+	int		i3 = 3;
+	ft_lstadd_back(&lst, ft_lstnew(&i1));
+	ft_lstadd_back(&lst, ft_lstnew(&i2));
+	ft_lstadd_back(&lst, ft_lstnew(&i3));
+
+	ft_lstiter(lst, square);
+	cur = lst;
+	assert(*(int *)cur->content == 1);
+	cur = cur->next;
+	assert(*(int *)cur->content == 4);
+	cur = cur->next;
+	assert(*(int *)cur->content == 9);
+
+	ft_lstclear(&lst, set_to_zero);
+}
+
+void	*square2(void *i)
+{
+	int	*p = i;
+	int *r = malloc(sizeof(int));
+	*r = *p * *p;
+	return ((void *)r);
+}
+
+void	test_lstmap()
+{
+	t_list	*lst = NULL;
+	t_list	*cur;
+	int		i1 = 1;
+	int		i2 = 2;
+	int		i3 = 3;
+	ft_lstadd_back(&lst, ft_lstnew(&i1));
+	ft_lstadd_back(&lst, ft_lstnew(&i2));
+	ft_lstadd_back(&lst, ft_lstnew(&i3));
+
+	t_list *mapped = ft_lstmap(lst, square2, NULL);
+	cur = mapped;
+	assert(*(int *)cur->content == 1);
+	cur = cur->next;
+	assert(*(int *)cur->content == 4);
+	cur = cur->next;
+	assert(*(int *)cur->content == 9);
+
+	ft_lstclear(&lst, set_to_zero);
+	ft_lstclear(&mapped, free);
+}
+
 int	main(void)
 {
 	printf("\n");
-	printf(" === Part 1 - Libc functions ===\n");
-	printf("|\t\t\t\t|\n");
+	printf("\n");
+	printf("Part 1: Libc functions\n");
+	printf("\n");
 
 	test_isalpha();
-	printf("|\tft_isalpha:\tOK\t|\n");
+	printf("ft_isalpha:\t\tOK\n");
 
 	test_isdigit();
-	printf("|\tft_isdigit:\tOK\t|\n");
+	printf("ft_isdigit:\t\tOK\n");
 
 	test_isalnum();
-	printf("|\tft_isalnum:\tOK\t|\n");
+	printf("ft_isalnum:\t\tOK\n");
 
 	test_isascii();
-	printf("|\tft_isascii:\tOK\t|\n");
+	printf("ft_isascii:\t\tOK\n");
 
 	test_isprint();
-	printf("|\tft_isprint:\tOK\t|\n");
+	printf("ft_isprint:\t\tOK\n");
 
 	test_strlen();
-	printf("|\tft_strlen:\tOK\t|\n");
+	printf("ft_strlen:\t\tOK\n");
 
 	test_memset();
-	printf("|\tft_memset:\tOK\t|\n");
+	printf("ft_memset:\t\tOK\n");
 
 	test_bzero();
-	printf("|\tft_bzero:\tOK\t|\n");
+	printf("ft_bzero:\t\tOK\n");
 
 	test_memcpy();
-	printf("|\tft_memcpy:\tOK\t|\n");
+	printf("ft_memcpy:\t\tOK\n");
 
 	test_memmove();
-	printf("|\tft_memmove:\tOK\t|\n");
+	printf("ft_memmove:\t\tOK\n");
 
 	test_strlcpy();
-	printf("|\tft_strlcpy:\tOK\t|\n");
+	printf("ft_strlcpy:\t\tOK\n");
 
 	test_strlcat();
-	printf("|\tft_strlcat:\tOK\t|\n");
+	printf("ft_strlcat:\t\tOK\n");
 
 	test_toupper();
-	printf("|\tft_toupper:\tOK\t|\n");
+	printf("ft_toupper:\t\tOK\n");
 
 	test_tolower();
-	printf("|\tft_tolower:\tOK\t|\n");
+	printf("ft_tolower:\t\tOK\n");
 
 	test_strchr();
-	printf("|\tft_strchr:\tOK\t|\n");
+	printf("ft_strchr:\t\tOK\n");
 
 	test_strrchr();
-	printf("|\tft_strrchr:\tOK\t|\n");
+	printf("ft_strrchr:\t\tOK\n");
 
 	test_strncmp();
-	printf("|\tft_strncmp:\tOK\t|\n");
+	printf("ft_strncmp:\t\tOK\n");
 
 	test_memchr();
-	printf("|\tft_memchr:\tOK\t|\n");
+	printf("ft_memchr:\t\tOK\n");
 
 	test_memcmp();
-	printf("|\tft_memcmp:\tOK\t|\n");
+	printf("ft_memcmp:\t\tOK\n");
 
 	test_strnstr();
-	printf("|\tft_strnstr:\tOK\t|\n");
+	printf("ft_strnstr:\t\tOK\n");
 
 	test_atoi();
-	printf("|\tft_atoi:\tOK\t|\n");
+	printf("ft_atoi:\t\tOK\n");
 
 	test_calloc();
-	printf("|\tft_calloc:\tOK\t|\n");
+	printf("ft_calloc:\t\tOK\n");
 
 	test_strdup();
-	printf("|\tft_strdup:\tOK\t|\n");
+	printf("ft_strdup:\t\tOK\n");
 
-	printf("|\t\t\t\t|\n");
-	printf(" ====== Libc functions OK ======\n");
 	printf("\n");
-	printf(" ==== Part 2 - Additional functions ====\n");
-	printf("|\t\t\t\t\t|\n");
+	printf("\tPart 1\tOK\n");
+
+	printf("\n");
+	printf("\n");
+	printf("\n");
+	printf("Part 2: Additional functions\n");
+	printf("\n");
+
 	test_substr();
-	printf("|\tft_substr:\tOK\t\t|\n");
+	printf("ft_substr:\t\tOK\n");
 
 	test_strjoin();
-	printf("|\tft_strjoin:\tOK\t\t|\n");
+	printf("ft_strjoin:\t\tOK\n");
 
 	test_strtrim();
-	printf("|\tft_strtrim:\tOK\t\t|\n");
+	printf("ft_strtrim:\t\tOK\n");
 
 	test_split();
-	printf("|\tft_split:\tOK\t\t|\n");
+	printf("ft_split:\t\tOK\n");
 
 	test_itoa();
-	printf("|\tft_itoa:\tOK\t\t|\n");
+	printf("ft_itoa:\t\tOK\n");
 
 	test_strmapi();
-	printf("|\tft_strmapi:\tOK\t\t|\n");
+	printf("ft_strmapi:\t\tOK\n");
 
 	test_striteri();
-	printf("|\tft_striteri:\tOK\t\t|\n");
+	printf("ft_striteri:\t\tOK\n");
 
 	test_putchar_fd();
-	printf("|\tft_putchar_fd:\tOK\t\t|\n");
+	printf("ft_putchar_fd:\t\tOK\n");
 
 	test_putstr_fd();
-	printf("|\tft_putstr_fd:\tOK\t\t|\n");
+	printf("ft_putstr_fd:\t\tOK\n");
 
 	test_putendl_fd();
-	printf("|\tft_putendl_fd:\tOK\t\t|\n");
+	printf("ft_putendl_fd:\t\tOK\n");
 
 	test_putnbr_fd();
-	printf("|\tft_putnbr_fd:\tOK\t\t|\n");
+	printf("ft_putnbr_fd:\t\tOK\n");
 
-	printf("|\t\t\t\t\t|\n");
-	printf(" ======= Additional functions OK =======\n");
+	printf("\n");
+	printf("\tPart 2\tOK\n");
+
+	printf("\n");
+	printf("\n");
+	printf("\n");
+	printf("Part 3: Linked list\n");
+	printf("\n");
+
+	test_lstnew();
+	printf("ft_lstnew:\t\tOK\n");
+
+	test_lstadd_front();
+	printf("ft_lstadd_front:\tOK\n");
+
+	test_lstsize();
+	printf("ft_lstsize:\t\tOK\n");
+
+	test_lstlast();
+	printf("ft_lstlast:\t\tOK\n");
+
+	test_lstadd_back();
+	printf("ft_lstadd_back:\t\tOK\n");
+
+	test_lstdelone();
+	printf("ft_lstdelone:\t\tOK\n");
+
+	test_lstclear();
+	printf("ft_lstclear:\t\tOK\n");
+
+	test_lstiter();
+	printf("ft_lstiter:\t\tOK\n");
+
+	test_lstmap();
+	printf("ft_lstmap:\t\tOK\n");
+
+	printf("\n");
+	printf("\tPart 3\tOK\n");
+
+	printf("\n");
+	printf("\n");
+	printf(	"       ::::::::  :::    ::: \n"
+			"     :+:    :+: :+:   :+:   \n"
+			"    +:+    +:+ +:+  +:+     \n"
+			"   +#+    +:+ +#++:++       \n"
+			"  +#+    +#+ +#+  +#+       \n"
+			" #+#    #+# #+#   #+#       \n"
+			" ########  ###    ###       \n\n");
+	printf("\n");
+
 	return (0);
 }
