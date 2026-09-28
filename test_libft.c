@@ -358,6 +358,8 @@ void	test_atoi()
 	assert(ft_atoi("2147483647") == atoi("2147483647"));
 
 	assert(ft_atoi("-2147483648") == atoi("-2147483648"));
+
+	assert(ft_atoi("-7906324293082309") == atoi("-7906324293082309"));
 }
 
 void	test_calloc()
