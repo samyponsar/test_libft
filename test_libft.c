@@ -596,7 +596,10 @@ void	test_split()
 	free(strs);
 
 	strs = ft_split("", 'a');
-	assert(strs == NULL);
+	if (!strs)
+		exit(1);
+	assert(strs[0] == NULL);
+	free(strs);
 
 	strs = ft_split(NULL, 'a');
 	assert(strs == NULL);
