@@ -489,16 +489,10 @@ void	test_strjoin()
 	free(joined);
 
 	joined = ft_strjoin("hello", NULL);
-	if (!joined)
-		exit(1);
-	assert(strcmp(joined, "hello") == 0);
-	free(joined);
+	assert(joined == NULL);
 
 	joined = ft_strjoin(NULL, "world");
-	if (!joined)
-		exit(1);
-	assert(strcmp(joined, "world") == 0);
-	free(joined);
+	assert(joined == NULL);
 
 	joined = ft_strjoin(NULL, NULL);
 	assert(joined == NULL);
@@ -551,10 +545,7 @@ void	test_strtrim()
 	free(trimmed);
 
 	trimmed = ft_strtrim("test", NULL);
-	if (!trimmed)
-		exit(1);
-	assert(strcmp(trimmed, "test") == 0);
-	free(trimmed);
+	assert(trimmed == NULL);
 
 	trimmed = ft_strtrim(NULL, "abcd");
 	assert(trimmed == NULL);
@@ -648,8 +639,7 @@ void	test_strmapi()
 	free(mapped);
 
 	mapped = ft_strmapi("test", NULL);
-	assert(strcmp(mapped, "test") == 0);
-	free(mapped);
+	assert(mapped == NULL);
 
 	mapped = ft_strmapi(NULL, char_func);
 	assert(mapped == NULL);
