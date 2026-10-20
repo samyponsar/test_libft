@@ -185,30 +185,43 @@ void	test_strlcat()
 	ret_libc = strlcat(str_libc, "hello", 6);
 	assert(strcmp(str_ft, str_libc) == 0);
 	assert(ret_ft == ret_libc);
+
 	ret_ft = ft_strlcat(str_ft, " world", 60);
 	ret_libc = strlcat(str_libc, " world", 60);
 	assert(strcmp(str_ft, str_libc) == 0);
 	assert(ret_ft == ret_libc);
+
 	ret_ft = ft_strlcat(str_ft, " another", 0);
 	ret_libc = strlcat(str_libc, " another", 0);
 	assert(strcmp(str_ft, str_libc) == 0);
 	assert(ret_ft == ret_libc);
+
 	ret_ft = ft_strlcat(str_ft, "", 40);
 	ret_libc = strlcat(str_libc, "", 40);
 	assert(strcmp(str_ft, str_libc) == 0);
 	assert(ret_ft == ret_libc);
+
 	ret_ft = ft_strlcat(str_ft, str_neg, 60);
 	ret_libc = strlcat(str_libc, str_neg, 60);
 	assert(strcmp(str_ft, str_libc) == 0);
 	assert(ret_ft == ret_libc);
+
 	ret_ft = ft_strlcat(str_ft, "verylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstring", 60);
 	ret_libc = strlcat(str_libc, "verylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstring", 60);
 	assert(strcmp(str_ft, str_libc) == 0);
 	assert(ret_ft == ret_libc);
+
 	ret_ft = ft_strlcat(str_ft, "verylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstring", 60);
 	ret_libc = strlcat(str_libc, "verylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstringverylongstring", 60);
 	assert(strcmp(str_ft, str_libc) == 0);
 	assert(ret_ft == ret_libc);
+
+	memset(str_ft, 'a', 60);
+	memset(str_libc, 'a', 60);
+	ret_ft = ft_strlcat(str_ft, "xy", 3);
+	ret_libc = strlcat(str_libc, "xy", 3);
+	assert(ret_ft == ret_libc);
+	assert(memcmp(str_ft, str_libc, 60) == 0);
 
 	free(str_neg);
 	free(str_ft);
