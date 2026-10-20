@@ -285,6 +285,23 @@ void	test_strncmp()
 	assert(ft_strncmp("test", "test2", 4) == strncmp("test", "test2", 4));
 
 	assert(ft_strncmp("", "", 10) == strncmp("", "", 10));
+
+	char	*str_neg = strdup("Test with negative values");
+	if (!str_neg)
+		exit(1);
+	str_neg[5] = -2;
+	char	*str_neg2 = strdup("Test with negative values");
+	if (!str_neg2)
+		exit(1);
+	str_neg2[5] = -4;
+	// valgrind replaces strncmp with its own, which returns 1 instead of
+	// the byte difference. the standard only guarantees the sign
+	assert((ft_strncmp(str_neg, str_neg2, 10) > 0) == (strncmp(str_neg, str_neg2, 10) > 0));
+	str_neg[3] = '\0';
+	str_neg2[3] = '\0';
+	assert(ft_strncmp(str_neg, str_neg2, 10) == strncmp(str_neg, str_neg2, 10));
+	free(str_neg);
+	free(str_neg2);
 }
 
 void	test_memchr()
@@ -378,6 +395,7 @@ void	test_atoi()
 void	test_calloc()
 {
 	char	*buff_ft;
+	char	*buff_ft2;
 	char	*buff_libc;
 
 	buff_ft = ft_calloc(8, 1);
@@ -401,6 +419,14 @@ void	test_calloc()
 	buff_libc = calloc(SIZE_MAX / 2, 1);
 	assert(buff_libc == NULL);
 	assert(buff_ft == buff_libc);
+
+	buff_ft = ft_calloc(0, 8);
+	buff_ft2 = ft_calloc(0, 8);
+	assert(buff_ft != NULL);
+	assert(buff_ft2 != NULL);
+	assert(buff_ft != buff_ft2);
+	free(buff_ft);
+	free(buff_ft2);
 }
 
 void	test_strdup()
