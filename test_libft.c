@@ -977,6 +977,7 @@ void	test_lstdelone()
 	ft_lstdelone(NULL, set_to_zero);
 	ft_lstdelone(NULL, NULL);
 
+	first = ft_lstnew(&content1);
 	ft_lstadd_back(&first, second);
 	ft_lstdelone(first, set_to_zero);
 	assert(content1 == 0);
@@ -999,6 +1000,7 @@ void	test_lstclear()
 	ft_lstclear(NULL, set_to_zero);
 	ft_lstclear(NULL, NULL);
 
+	first = ft_lstnew(&content1);
 	ft_lstadd_back(&lst, first);
 	ft_lstadd_back(&lst, second);
 	ft_lstadd_back(&lst, third);
